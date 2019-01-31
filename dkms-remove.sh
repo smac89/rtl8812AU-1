@@ -7,12 +7,13 @@ else
   echo "About to run dkms removal steps..."
 fi
 
-DRV_DIR=rtl8812au
 DRV_NAME=rtl8812au
+DRV_MODNAME=8812au
 DRV_VERSION=5.1.5
 
 dkms remove ${DRV_NAME}/${DRV_VERSION} --all
 rm -rf /usr/src/${DRV_NAME}-${DRV_VERSION}
+rmmod ${DRV_MODNAME}
 
 RESULT=$?
 if [[ "$RESULT" != "0" ]]; then

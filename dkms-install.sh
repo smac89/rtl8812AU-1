@@ -14,13 +14,16 @@ DRV_VERSION=5.1.5
 DRV_USR_SRC="/usr/src/${DRV_NAME}-${DRV_VERSION}"
 
 mkdir -p "${DRV_USR_SRC}"
+pushd "$(dirname `readlink -f "$0"`)" 2>&1 > /dev/null
 git archive --format=tar.gz --worktree-attributes --verbose HEAD | tar -xz -C "${DRV_USR_SRC}"
 sed -i s/#MODULE_VERSION#/"${DRV_VERSION}"/ "${DRV_USR_SRC}/dkms.conf"
 sed -i s/#MODULE_MODNAME#/"${DRV_MODNAME}"/ "${DRV_USR_SRC}/dkms.conf"
+popd 2>&1 > /dev/null
 
 dkms add -m ${DRV_NAME} -v ${DRV_VERSION}
 dkms build -m ${DRV_NAME} -v ${DRV_VERSION}
-dkms install -m ${DRV_NAME} -v ${DRV_VERSION} && modprobe ${DRV_MODNAME} --verbose
+dkms --force install -m ${DRV_NAME} -v ${DRV_VERSION}
+modprobe ${DRV_MODNAME} --verbose
 RESULT=$?
 
 echo "Finished running dkms install steps."
